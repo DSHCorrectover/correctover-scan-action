@@ -1,0 +1,45 @@
+name: 'CCS Security Scanner'
+description: 'Scan MCP configuration files for security vulnerabilities based on OWASP AISVS 1.0'
+author: 'Correctover'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Path to scan for MCP configuration files'
+    required: false
+    default: '.'
+  fail-on-critical:
+    description: 'Fail the workflow if critical issues are found'
+    required: false
+    default: 'true'
+  fail-on-warning:
+    description: 'Fail the workflow if any warnings are found'
+    required: false
+    default: 'false'
+  format:
+    description: 'Output format: text or sarif'
+    required: false
+    default: 'text'
+
+outputs:
+  files-scanned:
+    description: 'Number of configuration files scanned'
+  score:
+    description: 'Overall security score (0-100)'
+  passed:
+    description: 'Number of passed checks'
+  warnings:
+    description: 'Number of warning-level issues'
+  failures:
+    description: 'Number of critical-level failures'
+  total-issues:
+    description: 'Total number of issues found'
+  sarif:
+    description: 'SARIF format results (when format=sarif)'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
