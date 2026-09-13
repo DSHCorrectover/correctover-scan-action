@@ -6,6 +6,8 @@
 const core = require('@actions/core');
 const fs = require('fs');
 const path = require('path');
+const pkg = require('./package.json');
+const ACTION_VERSION = pkg.version;
 const { runScan, parseConfig, KNOWN_CONFIG_PATHS } = require('./core/scanner');
 const { recordCall, getUpgradeMessage } = require('./core/license');
 
@@ -65,7 +67,7 @@ async function run() {
     if (licStatus.tier === 'free') {
       core.info(`Free tier: ${licStatus.calls_remaining} scans remaining today`);
     }
-    core.info(`🔍 Correctover CCS Security Scanner v1.1.0`);
+    core.info(`🔍 Correctover CCS Security Scanner v${ACTION_VERSION}`);
     core.info(`Scanning: ${scanPath}`);
     core.info('');
 
@@ -133,7 +135,7 @@ async function run() {
               tool: {
                 driver: {
                   name: 'correctover-scan-action',
-                  version: '1.0.0',
+                  version: ACTION_VERSION,
                   informationUri: 'https://correctover.com',
                   rules: results.map(r => ({
                     id: r.id,
@@ -182,27 +184,32 @@ async function run() {
 
     // Add job summary
     const proCta = overallScore < 60 || totalFail > 0
-      ? `\n\n---\n**⚡ Need a formal compliance report?** [CCS Pro](https://correctover.com/checkout) generates audit reports, compliance certificates, and team dashboards. Enterprise includes runtime SDK + Token guarantee.`
-      : `\n\n---\n**✅ Nice score!** Get a formal compliance certificate with [CCS Pro](https://correctover.com/checkout) — audit reports, team dashboard, SOC 2 ready.`;
+      ? `\n\n---\n**⚡ Need a formal compliance report?** [CCS Pro](https://correctover.com/checkout) generates audit reports, compliance certificates, and team dashboards. Enterprise includes the runtime SDK.`
+      : `\n\n---\n**✅ Nice score!** Get a formal compliance certificate with [CCS Pro](https://correctover.com/checkout) — audit reports and a team dashboard.`;
     
-    await core.summary
-      .addHeading('🔒 CCS Security Scan Results')
-      .addTable([
-        [
-          { data: 'Metric', header: true },
-          { data: 'Value', header: true }
-        ],
-        ['Files Scanned', String(filesToScan.length)],
-        ['Security Score', `${overallScore}/100`],
-        ['✅ Passed', String(totalPass)],
-        ['⚠️ Warnings', String(totalWarn)],
-        ['❌ Failures', String(totalFail)],
-        ['ℹ️ Info', String(totalInfo)]
-      ])
-      .addLink('Powered by Correctover', 'https://correctover.com')
-      .addRaw(proCta)
-      .addRaw(`\n\n---\n${AUDIT_CTA}`)
-      .write();
+    try {
+      await core.summary
+        .addHeading('🔒 CCS Security Scan Results')
+        .addTable([
+          [
+            { data: 'Metric', header: true },
+            { data: 'Value', header: true }
+          ],
+          ['Files Scanned', String(filesToScan.length)],
+          ['Security Score', `${overallScore}/100`],
+          ['✅ Passed', String(totalPass)],
+          ['⚠️ Warnings', String(totalWarn)],
+          ['❌ Failures', String(totalFail)],
+          ['ℹ️ Info', String(totalInfo)]
+        ])
+        .addLink('Powered by Correctover', 'https://correctover.com')
+        .addRaw(proCta)
+        .addRaw(`\n\n---\n${AUDIT_CTA}`)
+        .write();
+    } catch (err) {
+      // Job summaries are optional (GITHUB_STEP_SUMMARY absent in some runtimes); log-only is fine.
+      core.debug(`Job summary skipped: ${err.message}`);
+    }
 
     // Manual audit CTA (action log tail)
     core.info('');

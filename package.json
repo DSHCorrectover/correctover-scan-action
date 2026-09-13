@@ -5,7 +5,7 @@
   "description": "GitHub Action for scanning MCP security configurations",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build index.js --outfile dist/index.js",
+    "build": "ncc build index.js -o dist -m",
     "test": "node test.js"
   },
   "dependencies": {
