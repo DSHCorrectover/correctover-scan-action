@@ -1,5 +1,7 @@
 # Correctover CCS Security Scanner - GitHub Action
 
+[**Commercial verification engagements — USD 8,000–15,000, court-ready dossier**](https://dshcorrectover.github.io/correctover-recovery-admission/services.html) · [**Independent audit & conformance**](https://dshcorrectover.github.io/correctover-recovery-admission/services.html)
+
 > Scan MCP configuration files for security vulnerabilities in CI
 
 ![GitHub Action](https://img.shields.io/badge/GitHub%20Action-CCS%20Scanner-blue) [![IETF Internet-Draft](https://img.shields.io/badge/IETF-draft--correctover--ccs-blue)](https://datatracker.ietf.org/doc/draft-correctover-ccs/)
